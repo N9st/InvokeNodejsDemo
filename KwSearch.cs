@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System;
+using System.Net.Http.Json;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -48,6 +49,15 @@ namespace KwMusic
         //获取reqId
         private async Task<string> GetReqId()
         {
+            //目的是传入一个范围0-255的整数数组
+            //C#中的byte[]，在JavaScript里是Uint8Array，范围都是0-255
+            //这里传入的参数类型是byte[]，Jering.Javascript.NodeJS会自动转换为Base64String，再传到JS执行
+            //也就有了这一行代码，将Base64String转换为Buffer数组
+            //mmm = Buffer.from(mmm, "base64")
+            //Node.js 中的 Buffer 是 Uint8Array 的子类
+            //console.log(Buffer.__proto__)
+            //打印结果[Function: Uint8Array] 
+            //Console.WriteLine(Convert.ToBase64String(ByteArray));
             return (await StaticNodeJSService.InvokeFromStringAsync<string>(SearchJs, args: new object[] { ByteArray }))!;
         }
         //获取kw_token
