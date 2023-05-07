@@ -14,9 +14,14 @@ namespace KwMusic
         private string? KwToken = string.Empty;
         //js脚本
         private readonly string SearchJs = string.Empty;
+        //byte[]，存储16个数字（范围0-255）
+        private readonly byte[] ByteArray = new byte[16];
         //构造函数
         public KwSearch()
         {
+            //初始化16位byte数组
+            ByteArray = GetByteArray();
+            //读取脚本文件
             Assembly assembly = Assembly.GetExecutingAssembly();
             //获取脚本路径
             string scriptPath = assembly.GetName().Name + ".Resources.KuWoSearch.js";
@@ -43,7 +48,7 @@ namespace KwMusic
         //获取reqId
         private async Task<string> GetReqId()
         {
-            return (await StaticNodeJSService.InvokeFromStringAsync<string>(SearchJs))!;
+            return (await StaticNodeJSService.InvokeFromStringAsync<string>(SearchJs, args: new object[] { ByteArray }))!;
         }
         //获取kw_token
         private async Task GetKwToken()
@@ -82,6 +87,17 @@ namespace KwMusic
                 HttpClient.DefaultRequestHeaders.Add("Referer", $"http://www.kuwo.cn/search/list?key={searchWord}");
                 HttpClient.DefaultRequestHeaders.Add("csrf", $"{kwToken}");
             }
+        }
+        //随机生成16个数字(byte[])
+        private static byte[] GetByteArray()
+        {
+            Random rnd = new();
+            byte[] byteArray = new byte[16];
+            for (int i = 0; i < 16; i++)
+            {
+                byteArray[i] = (byte)rnd.Next(0, 256);
+            }
+            return byteArray;
         }
     }
 }

@@ -1,15 +1,3 @@
-var nnn = function(r){
-	for(var i = 0; i < 16; i++){
-		r[i] = Math.random()*256
-	}
-	return r
-}
-
-var lll = function(r) {
-    var r = new Uint8Array(16);
-    return nnn(r)
-}
-
 var ccc = function(t, e) {
     for (var n = [], i = 0; i < 256; ++i)
         n[i] = (i + 256).toString(16).substr(1);
@@ -18,25 +6,14 @@ var ccc = function(t, e) {
     return [r[t[i++]], r[t[i++]], r[t[i++]], r[t[i++]], "-", r[t[i++]], r[t[i++]], "-", r[t[i++]], r[t[i++]], "-", r[t[i++]], r[t[i++]], "-", r[t[i++]], r[t[i++]], r[t[i++]], r[t[i++]], r[t[i++]], r[t[i++]]].join("")
 }
 
-var reqId = function(t, e, n) {
+var reqId = function(mmm) {
     var i = 0
       , b = []
-      , f = null
-      , v = null;
-    if (null == f || null == v) {
-        var m = lll();
-        null == f && (f = r = [1 | m[0], m[1], m[2], m[3], m[4], m[5]]),
-        null == v && (v = o = 16383 & (m[6] << 8 | m[7]))
-    }
-    var y = (new Date).getTime()
-      , w = 1
-      , d = 0
+      , f = [1 | mmm[0], mmm[1], mmm[2], mmm[3], mmm[4], mmm[5]]
+      , v = 16383 & (mmm[6] << 8 | mmm[7])
+      , y = (new Date).getTime()
       , h = 0
-      , dt = y - d + (w - h) / 1e4;
-    d = y,
-    h = w - 1,
-    o = v;
-    var x = (1e4 * (268435455 & (y += 122192928e5)) + h) % 4294967296;
+      , x = (1e4 * (268435455 & (y += 122192928e5)) + h) % 4294967296;
     b[i++] = x >>> 24 & 255,
     b[i++] = x >>> 16 & 255,
     b[i++] = x >>> 8 & 255,
@@ -52,7 +29,8 @@ var reqId = function(t, e, n) {
         b[i + A] = f[A];
     return ccc(b)
 }
-
-module.exports = async() => {
-	return reqId();
+//mmm is Buffer(16)
+module.exports = async(mmm) => {
+    mmm = Buffer.from(mmm, "base64")
+	return reqId(mmm);
 }
